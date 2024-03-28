@@ -33,3 +33,63 @@ tostring (directorio secuencia_encuesta secuencia_p orden), replace
 
 
 **. tipo como el nombre o el código del estudiante, etc.
+
+
+
+*PUNTO 3 
+
+*¿cuáles son las variables de identificación de cada tabla?
+
+*Directorio, secuencia_encuesta,  secuencia_encuesta y orden
+
+
+** unique --> instalarlo ¿CUAL ES UNIQUE?
+
+**isid. ---> condicion lógica -> es. esta vab mi varible de indentificacion ¿CUAL ES ISID?
+
+
+**. Estas son el nombre o el código del estudiante, etc. Son variables que nos permiten describir el diseño de la medicion, variables fijas. 
+
+**. La unidad de observacion en este caso es el individuo en una comunidad.  "Cada individuo pertenece a un hogar, y a su vez, un hogar puede tener varios integrantes." 
+
+
+*PUNTO 4
+
+use "ECV2015_CCH.dta", replace
+rename p6020 sexo
+gen mujer = sexo==2 
+
+*PUNTO 5
+
+*EDAD=p6040*
+
+gen n_menor_5 = 0
+replace n_menor_5 = 1 if p6040<5
+replace n_menor_5 = . if missing(p6040)
+count if p6040 == .
+
+gen n_menor_5y12 = 0
+replace n_menor_5y12 = 1 if p6040>=5 & p6040<=12
+replace n_menor_5y12 = . if missing(p6040)
+count if p6040 == .
+
+gen n_menor_13y18 = 0
+replace n_menor_13y18 = 1 if p6040>=13 & p6040<18
+replace n_menor_13y18 = . if missing(p6040)
+count if p6040 == .
+
+gen n_mayor_18 = 0
+replace n_mayor_18 = 1 if p6040>=18
+replace n_mayor_18 = . if missing(p6040)
+count if p6040 == .
+
+*PUNTO 6
+
+*EDAD=p6040*
+
+label variable n_menor_5 "niños menores de 5 años (no incluye 5)"
+label variable n_menor_5y12 "niños entre 5 y 12 años)"
+
+label variable n_menor_13y18 "menores de edad de 13 o más años (no incluye 18)"
+
+label variable n_mayor_18 "mayores de edad (con 18 o más años)"
