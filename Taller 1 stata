@@ -93,3 +93,36 @@ label variable n_menor_5y12 "niños entre 5 y 12 años)"
 label variable n_menor_13y18 "menores de edad de 13 o más años (no incluye 18)"
 
 label variable n_mayor_18 "mayores de edad (con 18 o más años)"
+
+
+*PUNTO 7
+
+*EDAD_PADRE=p6087*
+
+rename p6087 nedu_padre
+tab nedu_padre
+
+// Definir etiquetas para los valores
+label define educacion_padre ///
+    1 "Algunos años de primaria" ///
+    2 "Toda la primaria" ///
+    3 "Algunos años de secundaria" ///
+    4 "Toda la secundaria" ///
+    5 "Uno o mas años de técnica o tecnológica" ///
+    6 "Técnica o tecnológica completa" ///
+    7 "Uno o mas años de universidad" ///
+    8 "Universitaria completa" ///
+    9 "Ninguno" ///
+    10 "No sabe"
+
+// Aplicar las etiquetas a la variable
+label values nedu_padre educacion_padre
+
+**PUNTO 8
+
+**Eliminar variables no necesarias
+rename p6040 edad
+
+keep directorio secuencia_encuesta secuencia_p orden edad sexo n_menor_5 n_menor_5y12 n_menor_13y18 n_mayor_18
+
+save "personas_revisada.dta", replace
