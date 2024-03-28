@@ -1,2 +1,35 @@
-Acaaaao
-khjyhj
+**Taller 1 ** 
+
+cls 
+clear all 
+set more off 
+
+*PUNTO 1 
+
+cd "/Users/laurapadilla/Documents/Andes/sexto semestre/stata/Taller 1"
+import delimited "ECV2015_CCH.csv"
+
+save "ECV2015_CCH.dta", replace 
+tostring (directorio secuencia_encuesta secuencia_p orden), replace 
+
+
+clear all 
+
+*PUNTO 2 
+cd "/Users/laurapadilla/Documents/Andes/sexto semestre/stata/Taller 1"
+import delimited "ECV2015_S.csv"
+
+save "ECV2015_S.dta", replace
+tostring (directorio secuencia_encuesta secuencia_p orden), replace 
+
+
+*PUNTO 3 
+
+*¿cuáles son las variables de identificación de cada tabla?
+
+** unique --> instalarlo 
+
+**isid. ---> condicion lógica -> es. esta vab mi varible de indentificacion 
+
+
+**. tipo como el nombre o el código del estudiante, etc.
