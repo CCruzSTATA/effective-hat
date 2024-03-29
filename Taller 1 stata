@@ -182,9 +182,24 @@ count if missing == 1
 
 save "tabla salud", replace 
 
+
 **PUNTO 14 
 
+* En este punto se hace un merge ya que es una unión horizontal, donde se considera que ambas bases tienen 4 variables llave (tanto la base máster como la using), ante eso se hace uso de la variable de identificación de ambas bases. 
+
 merge m:m directorio using "personas_revisada.dta", gen(m1)
+
+* ¿Qué tipo de unión horizontal es esta? Este es un tipo de unión donde tanto en la base de datos master como en la using hay variables repetidas, por tanto se usa el many-to-many merge en las 4 variables llave específicas. 
+
+* ¿Cuántas observaciones pegaron y cuántas no lo hicieron? de las 76,026 observaciones, pegaron 39,472. 
+
+*¿Por qué hay observaciones que no están en una u otra tabla de datos? Esto se debe principalmente a que en puntos anteriores se eliminaron 47,038 variables tras realizar un proceso donde se eliminaba la  casilla si alguna de las variables tenia missing values. Por tanto, dado que hubo tantas eliminaciones en la segunda base de datos y ninguna en la primera, hay cierta incongruencia en las observaciones que pueden estar en una base de datos y en la otra no. 
+
+**PUNTO 15 
+
+sort directorio secuencia_encuesta
+
+collapse (sum) secuencia_p mujer n_menor_5 n_menor_5y12 n_menor_13y18 n_mayor_18  segusoc_salud hospit_salud  reg_contributivo (mean) edad, by (secuencia_encuesta)
 
 
 
