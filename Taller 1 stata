@@ -199,7 +199,7 @@ merge m:m directorio using "personas_revisada.dta", gen(m1)
 
 sort directorio secuencia_encuesta
 
-collapse (sum) secuencia_p mujer n_menor_5 n_menor_5y12 n_menor_13y18 n_mayor_18  segusoc_salud hospit_salud  reg_contributivo (mean) edad, by (secuencia_encuesta)
+collapse (sum) secuencia_p mujer n_menor_5 n_menor_5y12 n_menor_13y18 n_mayor_18  segusoc_salud hospit_salud  reg_contributivo (mean) edad, by (directorio)
 
 
 
