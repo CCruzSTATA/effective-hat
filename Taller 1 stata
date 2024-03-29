@@ -42,14 +42,6 @@ tostring (directorio secuencia_encuesta secuencia_p orden), replace
 
 *Directorio, secuencia_encuesta,  secuencia_encuesta y orden
 
-
-** unique --> instalarlo ¿CUAL ES UNIQUE?
-
-**isid. ---> condicion lógica -> es. esta vab mi varible de indentificacion ¿CUAL ES ISID?
-
-
-**. Estas son el nombre o el código del estudiante, etc. Son variables que nos permiten describir el diseño de la medicion, variables fijas. 
-
 **. La unidad de observacion en este caso es el individuo en una comunidad.  "Cada individuo pertenece a un hogar, y a su vez, un hogar puede tener varios integrantes." 
 
 
@@ -126,3 +118,81 @@ rename p6040 edad
 keep directorio secuencia_encuesta secuencia_p orden edad sexo n_menor_5 n_menor_5y12 n_menor_13y18 n_mayor_18
 
 save "personas_revisada.dta", replace
+
+
+**PUNTO 9 
+cls 
+clear all
+set more off 
+
+cd "/Users/laurapadilla/Documents/Andes/sexto semestre/stata/Taller 1"
+import delimited "ECV2015_S.csv"
+save "ECV2015_S.dta", replace 
+
+
+** En este punto es necesario renombrar la información que está contenida en las variables ya que esta es muy larga; por tanto, hay que label las diferentes variables para que estén autocontenidas en el nombre. 
+
+
+
+rename p6090 segusoc_salud
+label var segusoc_salud "afiliado/cotizante/beneficiario de alguna entidad de seguridad social en salud"
+describe segusoc_salud 
+
+
+rename p6100 ident_segusoc
+label var  ident_segusoc "idenitificación régimen de seguridad social afiliado"
+describe ident_segusoc 
+
+rename p6133 hospit_salud
+label var hospit_salud "posibilidad de hospitalización últimos 12 meses"
+describe hospit_salud
+
+rename p6115 pagomens_segusoc
+label var  pagomens_segusoc "Quién se encarga de pago de afiliación a seguridad social"
+describe pagomens_segusoc
+
+
+**PUNTO 10 
+
+keep directorio secuencia_encuesta secuencia_p orden segusoc_salud ident_segusoc hospit_salud pagomens_segusoc
+
+**PUNTO 11 
+
+// En este punto, se busca obtener otra valoracion de la variable hospit_salud, antes llamada p6133. Ante esto deben recodificarse los valores dados a las variables. 
+
+recode hospit_salud (2=0) (1=1)
+
+**PUNTO 12 
+
+// En  este punto tambien debe recodificarse inicialmente la variable de indificacion de seguro social de manera que se pueda determinar exactamente los individuos que hacen parte del regimen contributivo
+
+// Esta nueva variable llamada reg_contributivo, toma el valor de 1 si la persona pertenece a este regimen, y 0 si no. 
+
+recode ident_segusoc (1=1) (2=0) (3=0) (9=0), gen(reg_contributivo)
+
+**PUNTO 13 
+
+codebook 
+egen missing = rowmiss (segusoc_salud  ident_segusoc hospit_salud pagomens_segusoc)
+
+recode missing (1/3=0) (4=1)
+
+tab missing
+count if missing == 1
+
+save "tabla salud", replace 
+
+**PUNTO 14 
+
+merge m:m directorio using "personas_revisada.dta", gen(m1)
+
+
+
+
+
+
+
+
+
+
+
