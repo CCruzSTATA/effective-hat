@@ -173,14 +173,21 @@ recode ident_segusoc (1=1) (2=0) (3=0) (9=0), gen(reg_contributivo)
 **PUNTO 13 
 
 codebook 
-egen missing = rowmiss (segusoc_salud  ident_segusoc hospit_salud pagomens_segusoc)
+egen missing = rowmiss (segusoc_salud  reg_contributivo hospit_salud pagomens_segusoc)
 
-recode missing (1/3=0) (4=1)
+recode missing (2=1) (3=1) (4=1)
+
+
 
 tab missing
 count if missing == 1
+tab missing
+drop if missing == 1
+
 
 save "tabla salud", replace 
+
+
 
 
 **PUNTO 14 
