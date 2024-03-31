@@ -6,50 +6,44 @@ set more off
 
 *PUNTO 1 
 
-cd "/Users/laurapadilla/Documents/Andes/sexto semestre/stata/Taller 1"
+cd "/Users/carloscruz/Desktop/STATA/TALLER_1_LARGO"
 import delimited "ECV2015_CCH.csv"
 
 save "ECV2015_CCH.dta", replace 
 tostring (directorio secuencia_encuesta secuencia_p orden), replace 
 
 
+**Fijamos direrctorio e importamos para csv con comando correspondiente. Finalmente con tostring pasamos las variables a texto. 
+
 clear all 
 
 *PUNTO 2 
-cd "/Users/laurapadilla/Documents/Andes/sexto semestre/stata/Taller 1"
+cd "/Users/carloscruz/Desktop/STATA/TALLER_1_LARGO"
 import delimited "ECV2015_S.csv"
 
 save "ECV2015_S.dta", replace
 tostring (directorio secuencia_encuesta secuencia_p orden), replace 
 
+**Fijamos direrctorio e importamos para csv con comando correspondiente. Finalmente con tostring pasamos las variables a texto. 
 
 *PUNTO 3 
 
 *¿cuáles son las variables de identificación de cada tabla?
 
-** unique --> instalarlo 
+*Directorio, secuencia_encuesta,  secuencia_encuesta y orden. Son variables que nos permiten describir el diseño de la medicion, variables fijas. 
 
-**isid. ---> condicion lógica -> es. esta vab mi varible de indentificacion 
-
-
-**. tipo como el nombre o el código del estudiante, etc.
-
-
-
-*PUNTO 3 
-
-*¿cuáles son las variables de identificación de cada tabla?
-
-*Directorio, secuencia_encuesta,  secuencia_encuesta y orden
-
-**. La unidad de observacion en este caso es el individuo en una comunidad.  "Cada individuo pertenece a un hogar, y a su vez, un hogar puede tener varios integrantes." 
+**. La unidad de observacion en este caso es el individuo que hace parte de un hogar.  "Cada individuo pertenece a un hogar, y a su vez, un hogar puede tener varios integrantes." 
 
 
 *PUNTO 4
 
 use "ECV2015_CCH.dta", replace
+
 rename p6020 sexo
+
 gen mujer = sexo==2 
+
+**Renomramos variables del diccionario en unas más identificables y generamos variable mujuer a partir de sexo. 
 
 *PUNTO 5
 
@@ -75,6 +69,9 @@ replace n_mayor_18 = 1 if p6040>=18
 replace n_mayor_18 = . if missing(p6040)
 count if p6040 == .
 
+
+**Creamos variables uno a uno, primero la llenamos todo de cero, despues con la condicion agregamos unos. Además buscamos missing values. No hay missing values en las varibles del punto 6
+
 *PUNTO 6
 
 *EDAD=p6040*
@@ -86,6 +83,7 @@ label variable n_menor_13y18 "menores de edad de 13 o más años (no incluye 18)
 
 label variable n_mayor_18 "mayores de edad (con 18 o más años)"
 
+**Con label estamos etiquetando las variebles. 
 
 *PUNTO 7
 
@@ -94,7 +92,6 @@ label variable n_mayor_18 "mayores de edad (con 18 o más años)"
 rename p6087 nedu_padre
 tab nedu_padre
 
-// Definir etiquetas para los valores
 label define educacion_padre ///
     1 "Algunos años de primaria" ///
     2 "Toda la primaria" ///
@@ -107,15 +104,21 @@ label define educacion_padre ///
     9 "Ninguno" ///
     10 "No sabe"
 
-// Aplicar las etiquetas a la variable
+// Aplicamos las etiquetas a una variable que definimos con label dinfine y despues las reemplazamos en la variable de interes con label values 
 label values nedu_padre educacion_padre
+
+tab nedu_padre
+
+**Creamos etiquetas
 
 **PUNTO 8
 
 **Eliminar variables no necesarias
 rename p6040 edad
 
-keep directorio secuencia_encuesta secuencia_p orden edad sexo n_menor_5 n_menor_5y12 n_menor_13y18 n_mayor_18
+keep directorio secuencia_encuesta secuencia_p orden edad sexo n_menor_5 n_menor_5y12 n_menor_13y18 n_mayor_18 mujer
+
+**	Con keep mantenemos las variables que nos interesan. 
 
 save "personas_revisada.dta", replace
 
@@ -125,7 +128,7 @@ cls
 clear all
 set more off 
 
-cd "/Users/laurapadilla/Documents/Andes/sexto semestre/stata/Taller 1"
+cd "/Users/carloscruz/Desktop/STATA/TALLER_1_LARGO"
 import delimited "ECV2015_S.csv"
 save "ECV2015_S.dta", replace 
 
@@ -152,13 +155,17 @@ label var  pagomens_segusoc "Quién se encarga de pago de afiliación a segurida
 describe pagomens_segusoc
 
 
+** aplicamos etiquetas con label var y con describe revisamos que haya quedado correcto
+
 **PUNTO 10 
 
 keep directorio secuencia_encuesta secuencia_p orden segusoc_salud ident_segusoc hospit_salud pagomens_segusoc
 
+**	Con keep mantenemos las variables que nos interesan. 
+
 **PUNTO 11 
 
-// En este punto, se busca obtener otra valoracion de la variable hospit_salud, antes llamada p6133. Ante esto deben recodificarse los valores dados a las variables. 
+**En este punto, se busca obtener otra valoracion de la variable hospit_salud, antes llamada p6133. Ante esto deben recodificarse los valores dados a las variables. 
 
 recode hospit_salud (2=0) (1=1)
 
@@ -170,20 +177,21 @@ recode hospit_salud (2=0) (1=1)
 
 recode ident_segusoc (1=1) (2=0) (3=0) (9=0), gen(reg_contributivo)
 
-
 **PUNTO 13 
 
 codebook 
 egen missing = rowmiss (segusoc_salud  reg_contributivo hospit_salud pagomens_segusoc)
-
+br
 recode missing (2=1) (3=1) (4=1)
-
-
-
+br
 tab missing
 count if missing == 1
 tab missing
 drop if missing == 1
+tab missing
+
+
+*+Con codebook revisamos si existen missing. Efectivamente hay missing. Egen nos cuenta las veces que hay missing para las cuatro variables. Con recode cambiamos los valores a 1 para despues borrar los missing si hay 1 o más. 
 
 
 save "tabla salud", replace 
@@ -195,36 +203,49 @@ save "tabla salud", replace
 
 merge 1:1 directorio secuencia_encuesta secuencia_p orden using "personas_revisada.dta"
 
-* ¿Qué tipo de unión horizontal es esta? Este es un tipo de unión donde tanto en la base de datos master como en la using hay variables repetidas, por tanto se usa el many-to-many merge en las 4 variables llave específicas. 
+* ¿Qué tipo de unión horizontal es esta? Este es un tipo de unión donde tanto en la base de datos master como en la using hay las mismas variables repetidas, por tanto se usa el one-to-one merge en las 4 variables llave específicas. 
 
-* ¿Cuántas observaciones pegaron y cuántas no lo hicieron? de las 76,026 observaciones, pegaron 39,472. 
+* ¿Cuántas observaciones pegaron y cuántas no lo hicieron? de las 76,026 observaciones, pegaron 28,958. 
 
 *¿Por qué hay observaciones que no están en una u otra tabla de datos? Esto se debe principalmente a que en puntos anteriores se eliminaron 47,038 variables tras realizar un proceso donde se eliminaba la  casilla si alguna de las variables tenia missing values. Por tanto, dado que hubo tantas eliminaciones en la segunda base de datos y ninguna en la primera, hay cierta incongruencia en las observaciones que pueden estar en una base de datos y en la otra no. 
 
 **PUNTO 15 
 
 sort directorio secuencia_encuesta
-
+br
 collapse (sum) secuencia_p mujer n_menor_5 n_menor_5y12 n_menor_13y18 n_mayor_18  segusoc_salud hospit_salud  reg_contributivo (mean) edad, by (directorio)
+
+**Con collapse transformamos los individuos a hogares, sumando. 
 
 **PUNTO 16
 egen ranking=rank(edad), field
 save "tabla_hogares_revisada", replace 
 sort ranking
 
+**Creamos una variable que nos rankea la edad promedio del hogar
+
 **PUNTO 17 
-gen ident_hogar =directorio + secuencia_p
+
+gen ident_hogar = string(directorio + secuencia_p)
+
+**Creamos la variable string con la operación de suma- 
 
 **PUNTO 18
 
-gen ident_hogar_str = string(ident_hogar)
-gen ident_hogar_2 = substr(ident_hogar_str, 3, .)
+
+gen ident_hogar_2 = substr(ident_hogar, 3, .)
+
+**Generamos una nueva variable sin las dos primeras lineas donde el 3 nos cuenta de derecha a izquirda los caracteres a eliminar, incluyendo el punto. 
 
 
 **PUNTO 19 
 preserve
 keep in 1/100
+sum, d
 mean edad 
 sum reg_contributivo if reg_contributivo==1
-mean mujer if mujer==1
+count if reg_contributivo==1
+mean mujer 
 restore 
+
+**La media de edad para los 100 hogares más "viejos" es de  87.94. Hay 30 hogares más "viejos" en el regimen contributivo. El número promedio de mujeres en los 100 hogares más "viejos" es de 0.62. Lo que muestran los datos es que un 70% de la poblacion mas vieja se encuentra en regimen subsidiado lo que muestra el nivel de desigualdad en los más viejos donde el 30% tiene acceso a buena salud. En los hogares más viejos hay, en promedio, hay menos de una mujer con un 0.62 en la media. 
