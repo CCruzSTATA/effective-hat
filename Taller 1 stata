@@ -170,6 +170,7 @@ recode hospit_salud (2=0) (1=1)
 
 recode ident_segusoc (1=1) (2=0) (3=0) (9=0), gen(reg_contributivo)
 
+
 **PUNTO 13 
 
 codebook 
@@ -188,13 +189,11 @@ drop if missing == 1
 save "tabla salud", replace 
 
 
-
-
 **PUNTO 14 
 
 * En este punto se hace un merge ya que es una unión horizontal, donde se considera que ambas bases tienen 4 variables llave (tanto la base máster como la using), ante eso se hace uso de la variable de identificación de ambas bases. 
 
-merge m:m directorio using "personas_revisada.dta", gen(m1)
+merge 1:1 directorio secuencia_encuesta secuencia_p orden using "personas_revisada.dta"
 
 * ¿Qué tipo de unión horizontal es esta? Este es un tipo de unión donde tanto en la base de datos master como en la using hay variables repetidas, por tanto se usa el many-to-many merge en las 4 variables llave específicas. 
 
@@ -208,13 +207,24 @@ sort directorio secuencia_encuesta
 
 collapse (sum) secuencia_p mujer n_menor_5 n_menor_5y12 n_menor_13y18 n_mayor_18  segusoc_salud hospit_salud  reg_contributivo (mean) edad, by (directorio)
 
+**PUNTO 16
+egen ranking=rank(edad), field
+save "tabla_hogares_revisada", replace 
+sort ranking
+
+**PUNTO 17 
+gen ident_hogar =directorio + secuencia_p
+
+**PUNTO 18
+
+gen ident_hogar_str = string(ident_hogar)
+gen ident_hogar_2 = substr(ident_hogar_str, 3, .)
 
 
-
-
-
-
-
-
-
-
+**PUNTO 19 
+preserve
+keep in 1/100
+mean edad 
+sum reg_contributivo if reg_contributivo==1
+mean mujer if mujer==1
+restore 
